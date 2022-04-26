@@ -1,33 +1,36 @@
 package com.example.homework53
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.homework53.databinding.ActivityMainBinding
 
-private lateinit var binding : ActivityMainBinding
-
-@Suppress("DEPRECATION")
 class MainActivity() : AppCompatActivity() {
+    private lateinit var binding : ActivityMainBinding
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val text: String = result.data?.getStringExtra("KEY").toString()
+                binding.edittext.setText(text)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         btnListener()
-        onActivityResult(RESULT_OK,0,intent)
         val textValue = intent.getStringExtra("KEY")
         binding.edittext.setText(textValue)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val  text : String = intent.getStringExtra("KEY").toString()
-        if (resultCode == RESULT_OK && requestCode == 0){
-            binding.edittext.setText(text)
-        }
-    }
+
 
 
     private fun btnListener() {
@@ -41,7 +44,8 @@ class MainActivity() : AppCompatActivity() {
             } else {
                 val intent = Intent(this, SecondActivity::class.java)
                 intent.putExtra("KEY", binding.edittext.text.toString())
-                startActivity(intent)
+                startForResult.launch(intent)
+
             }
 
         }

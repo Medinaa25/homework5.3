@@ -26,7 +26,8 @@ class SecondActivity : AppCompatActivity() {
                 val intent = Intent(this, MainActivity::class.java)
                 setResult(RESULT_OK,intent)
                 intent.putExtra("KEY", binding.editText.text.toString())
-                startActivityForResult(intent,0)
+                setResult(RESULT_OK,intent)
+                finish()
             }
         }
     }
